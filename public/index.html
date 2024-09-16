@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+
+    <link rel="stylesheet" href="/style.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="module" src="./renderer.js"></script>
+
+    <title>khinsider Downloader GUI</title>
+</head>
+
+<body>
+    <h1>Welcome to khinsider Downloader GUI</h1>
+    <a href="https://downloads.khinsider.com">downloads.khinsider.com</a>
+    <br><br>
+    <form>
+        <label for="khlink">khinisider link:</label>
+        <input type="url" id="khlink" name="khlink"><br><br>
+        <label for="downloadDir">Download Directory:</label>
+        <div id="form_inline">
+            <input type="text" id="downloadDir" name="downloadDir">
+            <button id="folderSelectBtn">Choose folder</button>
+        </div><br><br>
+        <input type="submit" id="loadBtn" value="Load">
+    </form>
+    <div class="popup-overlay" id="popupOverlay">
+    <div class="popup" id="popup">
+        <span class="close" id="closePopup">&times;</span>
+        <div class="popup-content">
+            <p>Select Download Directory:</p>
+            <strong id="currentDir">/</strong>
+            <div id="fileList">
+                <p class="directory">test</p>
+                <p class="directory">test</p>
+                <p class="directory">test</p>
+                <p class="directory">test</p>
+                <p class="directory">test</p>
+                <p class="directory">test</p>
+            </div>
+            <button id="dirSelectedBtn">Select</button>
+            <button id="newDirBtn">New Folder</button>
+            <button id="dirNavUp">Up</button>
+        </div>
+    </div>
+    </div>
+    <p id="status">Status: Select download folder and khinisider album</p>
+
+    <hr>
+    <div id="trackList">
+    </div>
+    <hr>
+
+    <button id="downloadBtn">Download</button>
+
+</body>
+
+</html>

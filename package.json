@@ -1,0 +1,19 @@
+{
+  "name": "kh-downloader-web",
+  "version": "1.0.0",
+  "description": "khinsider Downloader GUI for web (for use with Docker)",
+  "main": "server.mjs",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "ASK",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.0",
+    "python-shell": "^5.0.0",
+    "socket.io": "^4.7.5"
+  }
+}
