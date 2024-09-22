@@ -37,7 +37,10 @@ let loadResult = {
 };*/
 
 document.addEventListener('DOMContentLoaded', () => {
-    ddirInput.value = getCookie('download_directory')
+    ddirInput.value = getCookie('download_directory');
+    if (ddirInput.value != ''){
+        currentDir = ddirInput.value;
+    }
 })
 
 function loadDirectories() {
