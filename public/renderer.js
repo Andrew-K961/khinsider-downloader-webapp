@@ -38,9 +38,6 @@ let loadResult = {
 
 document.addEventListener('DOMContentLoaded', () => {
     ddirInput.value = getCookie('download_directory');
-    if (ddirInput.value != ''){
-        currentDir = ddirInput.value;
-    }
 })
 
 function loadDirectories() {
@@ -85,6 +82,12 @@ folderSelectBtn.addEventListener('click', async (_event) => {
     popupOverlay.style.display = 'block';
     const response = await socket.timeout(5000).emitWithAck('getPlatform');
     platform = response.platform;
+    if (ddirInput.value != ''){
+        let fileDelimeter = getOSPathDelimiter();
+        const pathArray = ddirInput.value.split(fileDelimeter);
+        pathArray.shift();
+        currentDir = pathArray.join(fileDelimeter);
+    }
     loadDirectories();
 })
 
@@ -113,7 +116,6 @@ newDirBtn.addEventListener('click', (_event) => {
 })
 
 document.addEventListener('keydown', (_event) => {
-    console.log(document.activeElement.id);
     if (_event.keyCode === 13 && document.activeElement.id === 'newDirInput') {
         const input = document.getElementById('newDirInput');
         request_mkdir(rootDir.concat(currentDir, getOSPathDelimiter(), input.value));
