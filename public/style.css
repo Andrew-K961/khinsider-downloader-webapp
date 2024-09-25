@@ -5,9 +5,12 @@
 .track {
     display: flex;
     flex-direction: row;
-    justify-content: left;
     align-items: center;
     line-height: 0;
+    max-width: 50%;
+    justify-content: space-between;
+    border-bottom-style: solid;
+    border-width: thin;
 }
 
 #form_inline {

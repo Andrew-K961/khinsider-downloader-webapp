@@ -180,6 +180,7 @@ downloadBtn.addEventListener('click', (_event) => {
     setCookie('download_directory', ddirInput.value, 365);
 
     loadBtn.disabled = true;
+    downloadBtn.disabled = true;
 
     let jsonOut = JSON.parse(JSON.stringify(loadResult));
     let inputs = document.getElementsByClassName('check');
@@ -206,6 +207,7 @@ socket.on('statusUpdate', (response) => {
         loadBtn.disabled = true;
     } else {
         loadBtn.disabled = false;
+        downloadBtn.disabled = false;
         trackList.innerHTML = '';
     }
 
