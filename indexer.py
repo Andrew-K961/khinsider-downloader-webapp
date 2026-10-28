@@ -1,6 +1,7 @@
 import sys
 import json
-import urllib.request as urllib2
+from urllib.parse import unquote
+from curl_cffi import requests as cffi_requests
 from bs4 import BeautifulSoup
 
 BASE_URL = 'https://downloads.khinsider.com'
@@ -11,6 +12,20 @@ jsonResponse = {
     "track_names": "",
     "track_urls": ""
 }
+
+def initSoup(url):
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/125.0.0.0 Safari/537.36"
+        ),
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+    }
+    response = cffi_requests.get(url, headers=headers, impersonate="chrome", timeout=15)
+    soup = BeautifulSoup(response.text, features="html.parser")
+    return soup
 
 def fetch_from_url(url):
     if not url.startswith(f'{BASE_URL}/game-soundtracks/album/'):
@@ -25,7 +40,7 @@ def fetch_from_url(url):
     print(json.dumps(jsonResponse))
     sys.stdout.flush()
 
-    soup = BeautifulSoup(urllib2.urlopen(url), features="html.parser")
+    soup = initSoup(url)
 
     song_list = soup.find(id="songlist")
     anchors = song_list.find_all('a')
@@ -37,6 +52,9 @@ def fetch_from_url(url):
     for anchor in anchors:
         href = anchor.get('href')
         if href and 'mp3' in href:
+            # The page's href values are double-encoded (e.g. %2520 for a space).
+            # Decode once so the URL matches the server's real (single-encoded) path.
+            href = unquote(href)
             href = BASE_URL + href
             if href not in song_map:
                 song_map[href] = anchor.string

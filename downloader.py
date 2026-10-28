@@ -2,7 +2,7 @@ import os
 import sys
 import json
 import time
-import urllib.request as urllib2
+from curl_cffi import requests as cffi_requests
 from bs4 import BeautifulSoup
 
 jsonOutput = {
@@ -54,18 +54,18 @@ def fetch_from_url(args):
     # http://stackoverflow.com/questions/22676/how-do-i-download-a-file-over-http-using-python
     # Iterate through links, grab the mp3s, and download them
     for href, song_name in song_map.items():
-        link_soup = BeautifulSoup(urllib2.urlopen(href), features="html.parser")
+        track_response = cffi_requests.get(href, impersonate="chrome", timeout=15)
+        link_soup = BeautifulSoup(track_response.text, features="html.parser")
         audio = link_soup.find('audio')
         mp3_url = audio.get('src')
         if mp3_url not in downloaded_mp3s:
             downloaded_mp3s[mp3_url] = True
             file_name = song_name + '.mp3'
 
-            mp3file = urllib2.urlopen(mp3_url)
+            mp3file = cffi_requests.get(mp3_url, impersonate="chrome", timeout=30)
 
             # get file size
-            meta = mp3file.info()
-            file_size = float(meta.get("Content-Length")) / 1000000
+            file_size = float(len(mp3file.content)) / 1000000
 
             file_on_disk_path = dir_name + '/' + file_name
             # check if file already exists
@@ -80,7 +80,7 @@ def fetch_from_url(args):
                 printOutput(f'[downloading] {file_name} [{file_size:.2f} MB]')
 
                 with open(file_on_disk_path, 'wb') as output:
-                    output.write(mp3file.read())
+                    output.write(mp3file.content)
                     printOutput(f'[done] "{file_name}"')
             else:
                 printOutput(f'[skipping] "{file_name}" (already downloaded).')

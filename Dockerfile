@@ -43,7 +43,7 @@ RUN npm install --production --silent && mv node_modules ../
 # Install Python dependencies (BeautifulSoup 4)
 # Note: For a real project, you'd typically have a requirements.txt file
 # and use `pip install -r requirements.txt`.
-RUN pip install bs4
+RUN pip install bs4 curl_cffi
 
 # Copy the rest of your application files.
 # The `node_modules` are now in `/khd/node_modules` and won't be overwritten.
@@ -66,5 +66,15 @@ USER appuser
 # Define the command to start your webserver
 CMD ["npm", "start"]
 
-# Healthcheck to ensure the application is running and responsive
-HEALTHCHECK CMD curl --fail http://localhost:3000 || exit 1
+# Healthcheck to ensure the application is running and responsive.
+# curl is not available in the compact Alpine image, so we reuse Node.js
+# (the app's own runtime, already installed) to perform the HTTP request.
+# This keeps the image small while still validating the HTTP response code.
+#   --interval=30s   : check every 30 seconds
+#   --timeout=10s    : each check must complete within 10 seconds
+#   --start-period=15s: allow 15s for startup (app spawns Python child processes)
+#   --retries=3      : mark unhealthy after 3 consecutive failed checks
+# The exec form passes the JS directly to `node` (no shell quoting involved).
+# Exits 0 on a 2xx/3xx response, 1 on any 4xx/5xx response or connection error.
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+    CMD ["node", "-e", "const http=require('http');const req=http.get('http://localhost:3000',res=>{process.exit(res.statusCode<400?0:1)});req.on('error',()=>process.exit(1))"]

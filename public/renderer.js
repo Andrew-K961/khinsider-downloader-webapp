@@ -77,6 +77,11 @@ loadBtn.addEventListener('click', (_event) => {
     socket.emit('loadUrl', { input: url.value });
 })
 
+url.addEventListener('input', () => {
+    loadBtn.disabled = url.value.trim() === '';
+});
+loadBtn.disabled = url.value.trim() === '';
+
 folderSelectBtn.addEventListener('click', async (_event) => {
     _event.preventDefault();
     popupOverlay.style.display = 'block';
