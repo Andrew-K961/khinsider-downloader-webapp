@@ -23,7 +23,7 @@ Create a `docker-compose.yml` file:
 ```yaml
 services:
   khdownloaderweb:
-    image: ghcr.io/andrew-k961/khdweb:latest
+    image: ghcr.io/andrew-k961/khdownloaderweb:latest
     container_name: khdownloaderweb
     ports:
       - "3000:3000"
